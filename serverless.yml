@@ -1,0 +1,35 @@
+service: portfolio-lambda-service
+
+package:
+  excludeDevDependencies: true
+  individually: true
+  
+plugins:
+  - serverless-offline
+  - serverless-plugin-browserifier
+  - serverless-dotenv-plugin
+
+custom:
+  dotenv:
+    path: '.env'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  stage: dev
+
+  apiGateway:
+    restApiRootResourceId: yrkuofvcd0
+    restApiId: emmikoxidl
+    binaryMediaTypes:
+      - '*/*'
+
+functions:
+  createUser:
+    handler: dist/api.handler
+    events:
+      - http:
+          path: /users
+          method: POST
+          cors: true
