@@ -2,4 +2,5 @@
 /.env
 /deploy.sh
 /deploy-local.sh
-/dist
+.serverless/ 
+dist/
