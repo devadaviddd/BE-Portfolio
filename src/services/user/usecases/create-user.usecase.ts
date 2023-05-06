@@ -63,6 +63,13 @@ export class CreateUserUseCase {
       password,
     });
 
+    const isExistedUser = await this.userRepository.findByEmail(email);
+    console.log('isExistedUser', isExistedUser);
+    
+    if (isExistedUser) {
+      throw new BadRequestException('User is existed');
+    }
+
     await this.userRepository.create(user);
     const message = 'Create user Successfully';
     return {

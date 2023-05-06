@@ -8,9 +8,8 @@ export interface ViewUserResponse {
 
 export interface IUserRepository {
   create(newUser: User): Promise<void>;
-  findByEmails(emails: Array<string>): Promise<Array<User>>;
   update(email: string, newUser: User): Promise<void>;
-  findByEmail(email: string): Promise<User | null>;
+  findByEmail(email: string): Promise<boolean>;
   delete(email: string, version?: number): Promise<void>;
   viewUsers(): Promise<ViewUserResponse>;
 }
