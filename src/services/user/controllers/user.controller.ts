@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateUserDto } from "../domain";
 import { CreateUserUseCaseInput } from "../usecases";
-import { createUserUseCase } from "../di";
+import { createUserUseCase, getUsersUseCase } from "../di";
 import { ApiErrorMapper } from "../../../utils";
 
 export const createUser = async (
@@ -17,6 +17,22 @@ export const createUser = async (
       message: result.message,
       result: result.result,
     });
+  } catch (error: any) {
+    return ApiErrorMapper.toErrorResponse(error, response);
+  }
+}
+
+export const getUsers = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  try {
+    const result = await getUsersUseCase.execute();
+    return response.send({
+      users: result.users,
+      length: result.length
+    })
   } catch (error: any) {
     return ApiErrorMapper.toErrorResponse(error, response);
   }

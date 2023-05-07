@@ -33,3 +33,11 @@ functions:
           path: /users
           method: POST
           cors: true
+
+  getUsers:
+    handler: dist/api.handler
+    events:
+      - http:
+          path: /users
+          method: GET
+          cors: true

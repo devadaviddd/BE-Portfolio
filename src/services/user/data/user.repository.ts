@@ -29,14 +29,15 @@ export class UserCollectionRepository
     }
   }
 
-  async findByEmail(email: string): Promise<boolean> {
+  async findByEmail(email: string): Promise<User | null> {
     try {
       const query = { email: email };
       const records = await this.collection.find(query).toArray();
       if (records.length > 0) {
-        return true;
+        const user: User = this.mapper.toDomain(records[0]);
+        return user;
       }
-      return false;
+      return null;
     } catch (error) {
       throw new UnknownException(error as string);
     }
@@ -47,7 +48,15 @@ export class UserCollectionRepository
   delete(email: string, version?: number | undefined): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  viewUsers(): Promise<ViewUserResponse> {
-    throw new Error('Method not implemented.');
+  async viewUsers(): Promise<ViewUserResponse> {
+    try {
+      const records = await this.collection.find().toArray();
+      const users: User[] = records.map((record) => {
+        return this.mapper.toDomain(record);
+      });
+      return {result: users, length: records.length}
+    } catch (error) {
+      throw new UnknownException(error as string);
+    }
   }
 }

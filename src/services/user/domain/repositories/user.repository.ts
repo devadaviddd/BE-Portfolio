@@ -9,7 +9,7 @@ export interface ViewUserResponse {
 export interface IUserRepository {
   create(newUser: User): Promise<void>;
   update(email: string, newUser: User): Promise<void>;
-  findByEmail(email: string): Promise<boolean>;
+  findByEmail(email: string): Promise<User | null>;
   delete(email: string, version?: number): Promise<void>;
   viewUsers(): Promise<ViewUserResponse>;
 }
