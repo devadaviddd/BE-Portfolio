@@ -3,6 +3,8 @@ import { isStringEmptyOrUndefined } from "../../../../utils";
 import { Company } from "./company";
 import { School } from "./school";
 import { v4 as uuid } from 'uuid';
+import jwt from 'jsonwebtoken';
+import { jwtConfig } from "../../../../config";
 
 export interface UserProps {
   username: string,
@@ -11,12 +13,28 @@ export interface UserProps {
   major?: string,
   company?: Company[],
   school?: School[],
-  avatar: string,
+  avatar?: string,
   password: string,
   id?: string
 }
 
 export class User {
+  public get password() {
+    return this.props.password;
+  }
+
+  public get id() {
+    return this.props.id;
+  }
+
+  public get email() {
+    return this.props.email;
+  }
+
+  public get username() {
+    return this.props.username;
+  }
+
   constructor(private readonly props: UserProps) {
     if (!props) {
       throw new BadRequestException('Props of user is null/undefined');
@@ -76,5 +94,32 @@ export class User {
       password,
       id
     }
+  }
+  public matchPassword(enteredPassword: string) {
+    return this.password === enteredPassword;
+  }
+  public getSignedAccessToken(): string {
+    return jwt.sign(
+      {
+        id: this.id,
+      },
+      jwtConfig.secretKeyOfAccessToken,
+      {
+        expiresIn: jwtConfig.expiresIn,
+      },
+    );
+  }
+  public getSignedIdToken(): string {
+    return jwt.sign(
+      {
+        id: this.id,
+        email: this.email,
+        username: this.username,
+      },
+      jwtConfig.secretKeyOfIdToken,
+      {
+        expiresIn: jwtConfig.expiresIn,
+      },
+    );
   }
 }

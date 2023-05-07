@@ -3,7 +3,7 @@ import { Company, School, User, UserProps } from '../domain';
 
 export interface UserDataModel {
   _id: string | undefined;
-  avatar: string;
+  avatar?: string;
   company: string[] | undefined;
   email: string;
   fullname: string;

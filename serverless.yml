@@ -41,3 +41,19 @@ functions:
           path: /users
           method: GET
           cors: true
+
+  signin:
+    handler: dist/api.handler
+    events:
+      - http:
+          path: /auth/signin
+          method: POST
+          cors: true
+
+  signup:
+    handler: dist/api.handler
+    events:
+      - http:
+          path: /auth/signup
+          method: POST
+          cors: true
