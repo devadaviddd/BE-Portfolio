@@ -23,14 +23,16 @@ export class SignUpUseCase {
     if (
       !email ||
       !password ||
-      !username
+      !username || 
+      !fullName
     ) {
       const missingFields: string[] = [];
       if (!email) missingFields.push('email');
       if (!password) missingFields.push('password');
+      if (!fullName) missingFields.push('fullName');
       if (!username) missingFields.push('username');
 
-      const errorStr = 'Missing ' + missingFields.join(', ');
+      const errorStr = 'Required Fields: ' + missingFields.join(', ');
       throw new BadRequestException(errorStr);
     }
 

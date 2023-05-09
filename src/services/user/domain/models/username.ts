@@ -1,5 +1,5 @@
 export class Username {
-  private static readonly usernameRegex = /^[a-z][a-zA-Z0-9._-]{1,50}$/;
+  private static readonly usernameRegex =/^[a-z]{1,20}$/i;
 
   public static isValid(value?: string) {
     if (value) return this.usernameRegex.test(value);

@@ -4,3 +4,4 @@
 /deploy-local.sh
 .serverless/ 
 dist/
+/coverage

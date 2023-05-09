@@ -36,6 +36,7 @@ export class CreateUserUseCase {
       if(!username) missingFields.push('username');
       if(!fullName) missingFields.push('fullName');
       if(!password) missingFields.push('password');
+      throw new BadRequestException('Required Fields: ' +  missingFields);
     }
 
     const isNotValidEmail = !Email.isValid(email);
