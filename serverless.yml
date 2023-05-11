@@ -57,3 +57,11 @@ functions:
           path: /auth/signup
           method: POST
           cors: true
+
+  update:
+    handler: dist/api.handler
+    events:
+      - http:
+          path: /users/{id}
+          method: PATCH
+          cors: true

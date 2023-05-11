@@ -64,14 +64,19 @@ export class UserCollectionRepository
   }
   async update(_id: string, newUser: User): Promise<void> {
     try {
-      const query = { _id: _id };
-      const newValue = { $set: newUser };
-      await this.collection.updateOne(query, newValue);
+      const query = { _id: _id };      
+      const dataModel = this.mapper.fromDomain(newUser);
+      await this.collection.updateOne(query, {$set: dataModel});
     } catch (error) {
       throw new UnknownException(error as string);
     }
   }
-  delete(email: string, version?: number | undefined): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(email: string): Promise<void> {
+    try {
+      const query = { email: email};
+      await this.collection.deleteOne(query);
+    } catch (error) {
+      throw new UnknownException(error as string);
+    }
   }
 }

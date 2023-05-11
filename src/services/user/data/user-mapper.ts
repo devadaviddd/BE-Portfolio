@@ -1,5 +1,5 @@
 import { DatabaseMapper } from '../../../utils';
-import { Company, School, User, UserProps } from '../domain';
+import { Company, CompanyProps, School, SchoolProps, User, UserProps } from '../domain';
 
 export interface UserDataModel {
   _id: string | undefined;
@@ -31,6 +31,22 @@ export class UserMongoDBMapper extends DatabaseMapper<
     return schools;
   }
 
+  companyMapToStrings(company: Company[]): string[] {
+    const companies: string[] = company.map((each: any) => {
+      const { name } = each.props;
+      return name;
+    })
+    return companies;
+  } 
+
+  schoolMapToStrings(school: School[]): string[] {
+    const schools: string[] = school.map((each: any) => {      
+      const { name } = each.props;
+      return name;
+    })
+    return schools;
+  } 
+
   toDomain(dataModel: UserDataModel): User {
     const user = new User({
       id: dataModel._id,
@@ -47,16 +63,16 @@ export class UserMongoDBMapper extends DatabaseMapper<
   }
 
   fromDomain(domainModel: User): UserDataModel {
-    const user: UserProps = domainModel.accessProps();
+    const user: UserProps = domainModel.accessProps();    
     const data: UserDataModel = {
       _id: user.id,
       avatar: user.avatar,
-      company: user.company?.map((element) => element.toString()),
+      company: user.company?this.companyMapToStrings(user.company):undefined,
       email: user.email,
       fullname: user.fullName,
       major: user.major,
       password: user.password,
-      school: user.school?.map((element) => element.toString()),
+      school: user.school?this.schoolMapToStrings(user.school):undefined,
       username: user.username
     }
     return data;
