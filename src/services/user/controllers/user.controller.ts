@@ -3,6 +3,7 @@ import { CreateUserDto, UpdateUserDto } from '../domain';
 import { CreateUserUseCaseInput } from '../usecases';
 import {
   createUserUseCase,
+  deleteUserUseCase,
   getUsersUseCase,
   updateUserUseCase,
 } from '../di';
@@ -57,6 +58,24 @@ export const updateUser = async (
     return response.send({
       message: result.message,
       modifiedUser: result.updateUser,
+    });
+  } catch (error: any) {
+    return ApiErrorMapper.toErrorResponse(error, response);
+  }
+};
+
+export const deleteUser = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email } = request.params;
+    const result = await deleteUserUseCase.execute({
+      email,
+    });
+    return response.send({
+      message: result.message,
     });
   } catch (error: any) {
     return ApiErrorMapper.toErrorResponse(error, response);

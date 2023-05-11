@@ -8,9 +8,7 @@ import {
 import {
   Email,
   IUserRepository,
-  Password,
   UpdateUserDto,
-  User,
   UserProps,
   Username,
 } from '../domain';
