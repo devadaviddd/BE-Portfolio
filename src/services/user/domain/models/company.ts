@@ -6,10 +6,12 @@ export interface CompanyProps {
 }
 
 export class Company {
+  public get name() {
+    return this.props.name;
+  }
+  
   constructor(private readonly props: CompanyProps) {
     const { name } = props;
-
-
     if(!props) {
       throw new BadRequestException('Props of Company is null / undefined')
     }

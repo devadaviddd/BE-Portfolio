@@ -3,6 +3,7 @@ import {
   GetUsersUseCase,
   SignUpUseCase,
   SigninUseCase,
+  UpdateUserUseCase,
 } from '../usecases';
 import { userRepository } from './init-repository';
 
@@ -12,3 +13,4 @@ export const createUserUseCase = new CreateUserUseCase(
   userRepository,
 );
 export const getUsersUseCase = new GetUsersUseCase(userRepository);
+export const updateUserUseCase = new UpdateUserUseCase(userRepository);

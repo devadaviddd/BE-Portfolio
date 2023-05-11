@@ -11,6 +11,7 @@ describe('Signup Auth Test Suite', () => {
       viewUsers: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      findById: jest.fn(),
     };
     afterEach(() => {
       jest.resetAllMocks();

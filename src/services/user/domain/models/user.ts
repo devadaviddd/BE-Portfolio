@@ -51,9 +51,6 @@ export class User {
       id
     } = props;
 
-    if(isStringEmptyOrUndefined(username)) {
-      throw new BadRequestException('Email is null/undefined');
-    }
     if (isStringEmptyOrUndefined(password)) {
       throw new BadRequestException('Password is null/undefined');
     }
@@ -121,5 +118,29 @@ export class User {
         expiresIn: jwtConfig.expiresIn,
       },
     );
+  }
+  public updateUsername(username: string): void {
+    this.props.username = username;
+  }
+  public updateFullName(fullName: string): void {
+    this.props.fullName = fullName;
+  }
+  public updateEmail(email: string): void {
+    this.props.email = email;
+  }
+  public updatePassword(password: string): void {
+    this.props.password = password;
+  }
+  public updateMajor(major: string): void {
+    this.props.major = major;
+  }
+  public updateCompany(company: Company[]): void {
+    this.props.company = company;
+  }
+  public updateAvatar(avatar: string): void {
+    this.props.avatar = avatar;
+  }
+  public updateSchool(school: School[]): void {
+    this.props.school = school;
   }
 }

@@ -19,7 +19,6 @@ export class UserCollectionRepository
       this.config.collection,
     );
   }
-
   async create(user: User): Promise<void> {
     try {
       const dataModel = this.mapper.fromDomain(user);
@@ -28,7 +27,6 @@ export class UserCollectionRepository
       throw new UnknownException(error as string);
     }
   }
-
   async findByEmail(email: string): Promise<User | null> {
     try {
       const query = { email: email };
@@ -42,21 +40,38 @@ export class UserCollectionRepository
       throw new UnknownException(error as string);
     }
   }
-  update(email: string, newUser: User): Promise<void> {
-    throw new Error('Method not implemented.');
+  async findById(id: string): Promise<User | null> {
+    try {
+      const query = { _id: id };
+      const userDataModel = await this.collection.findOne(query);      
+      if (userDataModel) return this.mapper.toDomain(userDataModel);
+      return null;
+    } catch (error) {
+      throw new UnknownException(error as string);
+    }
   }
-  delete(email: string, version?: number | undefined): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+
   async viewUsers(): Promise<ViewUserResponse> {
     try {
       const records = await this.collection.find().toArray();
       const users: User[] = records.map((record) => {
         return this.mapper.toDomain(record);
       });
-      return {result: users, length: records.length}
+      return { result: users, length: records.length };
     } catch (error) {
       throw new UnknownException(error as string);
     }
+  }
+  async update(_id: string, newUser: User): Promise<void> {
+    try {
+      const query = { _id: _id };
+      const newValue = { $set: newUser };
+      await this.collection.updateOne(query, newValue);
+    } catch (error) {
+      throw new UnknownException(error as string);
+    }
+  }
+  delete(email: string, version?: number | undefined): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

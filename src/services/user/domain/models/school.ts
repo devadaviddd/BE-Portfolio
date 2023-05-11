@@ -6,15 +6,17 @@ export interface SchoolProps {
 }
 
 export class School {
+  public get name() {
+    return this.props.name;
+  }
+
   constructor(private readonly props: SchoolProps) {
     const { name } = props;
-
-
     if(!props) {
       throw new BadRequestException('Props of school is null / undefined')
     }
     if(isStringEmptyOrUndefined(name)) {
-      throw new BadRequestException('Name is null/undefined');
+      throw new BadRequestException('Name School is invalid');
     }
   }
 

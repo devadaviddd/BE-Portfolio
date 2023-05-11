@@ -12,4 +12,5 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   delete(email: string, version?: number): Promise<void>;
   viewUsers(): Promise<ViewUserResponse>;
+  findById(id: string): Promise<User | null>;
 }

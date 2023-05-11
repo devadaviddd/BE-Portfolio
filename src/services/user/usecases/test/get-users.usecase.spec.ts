@@ -20,6 +20,7 @@ describe('Get Users Unit Test Suite', () => {
       viewUsers: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      findById: jest.fn(),
     };
     const id1 = uuid();
     const id2 = uuid();
