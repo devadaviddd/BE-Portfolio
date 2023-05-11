@@ -2,7 +2,7 @@ import { BadRequestException } from '../../../exceptions';
 import { IUserRepository } from '../domain';
 export class DeleteUserUseCaseInput {
   constructor(
-    public readonly email: string
+    public readonly id: string
   ){}
 }
 
@@ -18,13 +18,13 @@ export class DeleteUserUseCase {
   async execute(
     input: DeleteUserUseCaseInput
   ): Promise<DeleteUserUseCaseResponse>{
-    const { email } = input;
-    const user = await this.userRepository.findByEmail(email);
+    const { id } = input;
+    const user = await this.userRepository.findById(id);
     if (!user) {
       throw new BadRequestException('User is not existed');
     }
 
-    await this.userRepository.delete(email);
+    await this.userRepository.delete(id);
     return {
       message: 'Delete User Successfully'
     }

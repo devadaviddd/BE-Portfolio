@@ -65,3 +65,11 @@ functions:
           path: /users/{id}
           method: PATCH
           cors: true
+
+  delete:
+    handler: dist/api.handler
+    events:
+      - http:
+          path: /users/{id}
+          method: DELETE
+          cors: true

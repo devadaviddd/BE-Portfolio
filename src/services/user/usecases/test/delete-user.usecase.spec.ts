@@ -51,7 +51,7 @@ describe('Delete User Use Case Test Suite', () => {
       };
 
       const user: User = new User(dto);
-      mockUserRepository.findByEmail.mockImplementationOnce(() =>
+      mockUserRepository.findById.mockImplementationOnce(() =>
         Promise.resolve(user),
       );
 
@@ -63,12 +63,12 @@ describe('Delete User Use Case Test Suite', () => {
       const response = await usecase.execute(input);
 
       expect(response).toEqual(expectedResponse);
-      expect(mockUserRepository.findByEmail).toBeCalled();
+      expect(mockUserRepository.findById).toBeCalled();
     });
 
     it('Should throw Error when User not found', async () => {
       const id = uuid();
-      mockUserRepository.findByEmail.mockImplementationOnce(() =>
+      mockUserRepository.findById.mockImplementationOnce(() =>
         Promise.resolve(null),
       );
       const input = new DeleteUserUseCaseInput(id);
@@ -76,7 +76,7 @@ describe('Delete User Use Case Test Suite', () => {
       expect(usecase.execute(input)).rejects.toThrowError(new BadRequestException(
         'User is not existed'
       ));
-      expect(mockUserRepository.findByEmail).toBeCalled();
+      expect(mockUserRepository.findById).toBeCalled();
     
     });
   });

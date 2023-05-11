@@ -70,9 +70,9 @@ export const deleteUser = async (
   next: NextFunction,
 ) => {
   try {
-    const { email } = request.params;
+    const { id } = request.params;    
     const result = await deleteUserUseCase.execute({
-      email,
+      id,
     });
     return response.send({
       message: result.message,

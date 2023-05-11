@@ -43,7 +43,7 @@ export class UserCollectionRepository
   async findById(id: string): Promise<User | null> {
     try {
       const query = { _id: id };
-      const userDataModel = await this.collection.findOne(query);      
+      const userDataModel = await this.collection.findOne(query);
       if (userDataModel) return this.mapper.toDomain(userDataModel);
       return null;
     } catch (error) {
@@ -62,18 +62,18 @@ export class UserCollectionRepository
       throw new UnknownException(error as string);
     }
   }
-  async update(_id: string, newUser: User): Promise<void> {
+  async update(id: string, newUser: User): Promise<void> {
     try {
-      const query = { _id: _id };      
+      const query = { _id: id };
       const dataModel = this.mapper.fromDomain(newUser);
-      await this.collection.updateOne(query, {$set: dataModel});
+      await this.collection.updateOne(query, { $set: dataModel });
     } catch (error) {
       throw new UnknownException(error as string);
     }
   }
-  async delete(email: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
-      const query = { email: email};
+      const query = { _id: id };
       await this.collection.deleteOne(query);
     } catch (error) {
       throw new UnknownException(error as string);
