@@ -32,7 +32,5 @@ export class SkillCollectionRepository
   }
   delete(id: string): Promise<void> {
     throw new Error('Method not implemented.');
-  }
-
-  
+  } 
 }

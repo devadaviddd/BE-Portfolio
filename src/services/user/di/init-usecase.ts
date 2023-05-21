@@ -1,5 +1,6 @@
 import {
   CreateUserUseCase,
+  GetUserUseCase,
   GetUsersUseCase,
   SignUpUseCase,
   SigninUseCase,
@@ -16,3 +17,4 @@ export const createUserUseCase = new CreateUserUseCase(
 export const getUsersUseCase = new GetUsersUseCase(userRepository);
 export const updateUserUseCase = new UpdateUserUseCase(userRepository);
 export const deleteUserUseCase = new DeleteUserUseCase(userRepository);
+export const getUserUseCase = new GetUserUseCase(userRepository);

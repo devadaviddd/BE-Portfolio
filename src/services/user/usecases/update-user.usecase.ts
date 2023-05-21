@@ -42,8 +42,11 @@ export class UpdateUserUseCase {
       company,
       school,
       avatar,
+      avatarBuffer,
       password,
     } = dto;
+
+    console.log('avatar here: ', avatar);
 
     const isUnchangedUserName = isStringEmptyOrUndefined(username);
     const isUnchangedEmail = isStringEmptyOrUndefined(email);
@@ -58,7 +61,6 @@ export class UpdateUserUseCase {
     if (!user) {
       throw new BadRequestException('User is not existed');
     }
-
     if (
       isUnchangedUserName &&
       isUnchangedEmail &&
@@ -71,38 +73,41 @@ export class UpdateUserUseCase {
     ) {
       throw new BadRequestException('Nothing to update');
     }
-
     if (!isUnchangedEmail) {
       const isNotValidEmail = !Email.isValid(email!);
       if (isNotValidEmail) {
         throw new BadRequestException('Email is not valid');
       }
-      user.updateEmail(email!);
+      if (user.email !== email) user.updateEmail(email!);
     }
     if (!isUnchangedUserName) {
       const isNotValidUsername = !Username.isValid(username!);
       if (isNotValidUsername) {
         throw new BadRequestException('Username is not valid');
       }
-      user.updateUsername(username!);
+      if (user.username !== username) user.updateUsername(username!);
     }
     if (!isUnchangedFullName) {
-      user.updateFullName(fullName!);
+      if (user.fullName !== fullName) user.updateFullName(fullName!);
     }
     if (!isUnchangedSchool) {
-      user.updateSchool(school!);
+      if (user.school !== school) user.updateSchool(school!);
     }
     if (!isUnchangedCompany) {
-      user.updateCompany(company!);
+      if (user.company !== company) user.updateCompany(company!);
     }
     if (!isUnchangedAvatar) {
-      user.updateAvatar(avatar!);
+      if (user.avatar !== avatar) {
+        user.updateAvatar(avatar!);
+        console.log('avatar: ', avatar);
+        this.userRepository.uploadAvatar(id, avatar!, avatarBuffer!);
+      }
     }
     if (!isUnchangedMajor) {
-      user.updateMajor(major!);
+      if (user.major !== major) user.updateMajor(major!);
     }
     if (!isUnchangedPassword) {
-      user.updatePassword(password!);
+      if (user.password !== password) user.updatePassword(password!);
     }
 
     await this.userRepository.update(id, user);

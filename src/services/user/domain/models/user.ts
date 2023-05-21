@@ -1,43 +1,39 @@
-import { BadRequestException } from "../../../../exceptions";
-import { isStringEmptyOrUndefined } from "../../../../utils";
-import { Company } from "./company";
-import { School } from "./school";
+import { BadRequestException } from '../../../../exceptions';
+import { isStringEmptyOrUndefined } from '../../../../utils';
+import { Company } from './company';
+import { School } from './school';
 import { v4 as uuid } from 'uuid';
 import jwt from 'jsonwebtoken';
-import { jwtConfig } from "../../../../config";
+import { jwtConfig } from '../../../../config';
 
 export interface UserProps {
-  username: string,
-  email: string,
-  fullName: string,
-  major?: string,
-  company?: Company[],
-  school?: School[],
-  avatar?: string,
-  password: string,
-  id?: string
+  username: string;
+  email: string;
+  fullName: string;
+  major?: string;
+  company?: Company[];
+  school?: School[];
+  avatar?: string;
+  password: string;
+  id?: string;
 }
 
 export class User {
-  public get password() {
-    return this.props.password;
-  }
+  public username: string;
+  public email: string;
+  public fullName: string;
+  public major?: string;
+  public company?: Company[];
+  public school?: School[];
+  public avatar?: string;
+  public password: string;
+  public id?: string;
 
-  public get id() {
-    return this.props.id;
-  }
-
-  public get email() {
-    return this.props.email;
-  }
-
-  public get username() {
-    return this.props.username;
-  }
-
-  constructor(private readonly props: UserProps) {
+  constructor(props: UserProps) {
     if (!props) {
-      throw new BadRequestException('Props of user is null/undefined');
+      throw new BadRequestException(
+        'Props of user is null/undefined',
+      );
     }
     const {
       username,
@@ -48,7 +44,7 @@ export class User {
       school,
       avatar,
       password,
-      id
+      id,
     } = props;
 
     if (isStringEmptyOrUndefined(password)) {
@@ -64,33 +60,31 @@ export class User {
       throw new BadRequestException('Email is null/undefined');
     }
     if (!id) {
-      this.props.id = uuid();
+      this.id = uuid();
     }
+    this.username = username;
+    this.email = email;
+    this.fullName = fullName;
+    this.major = major;
+    this.company = company;
+    this.school = school;
+    this.avatar = avatar;
+    this.password = password;
+    this.id = id;
   }
 
   public accessProps(): UserProps {
-    const {
-      username,
-      email,
-      fullName,
-      major,
-      company,
-      school,
-      avatar,
-      password,
-      id
-    } = this.props;
     return {
-      username,
-      email,
-      fullName,
-      major,
-      company,
-      school,
-      avatar,
-      password,
-      id
-    }
+      username: this.username,
+      email: this.email,
+      fullName: this.fullName,
+      major: this.major,
+      company: this.company,
+      school: this.school,
+      avatar: this.avatar,
+      password: this.password,
+      id: this.id,
+    };
   }
   public matchPassword(enteredPassword: string) {
     return this.password === enteredPassword;
@@ -120,27 +114,27 @@ export class User {
     );
   }
   public updateUsername(username: string): void {
-    this.props.username = username;
+    this.username = username;
   }
   public updateFullName(fullName: string): void {
-    this.props.fullName = fullName;
+    this.fullName = fullName;
   }
   public updateEmail(email: string): void {
-    this.props.email = email;
+    this.email = email;
   }
   public updatePassword(password: string): void {
-    this.props.password = password;
+    this.password = password;
   }
   public updateMajor(major: string): void {
-    this.props.major = major;
+    this.major = major;
   }
   public updateCompany(company: Company[]): void {
-    this.props.company = company;
+    this.company = company;
   }
   public updateAvatar(avatar: string): void {
-    this.props.avatar = avatar;
+    this.avatar = avatar;
   }
   public updateSchool(school: School[]): void {
-    this.props.school = school;
+    this.school = school;
   }
 }

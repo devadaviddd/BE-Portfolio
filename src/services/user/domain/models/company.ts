@@ -6,11 +6,9 @@ export interface CompanyProps {
 }
 
 export class Company {
-  public get name() {
-    return this.props.name;
-  }
+  public name: string
   
-  constructor(private readonly props: CompanyProps) {
+  constructor(props: CompanyProps) {
     const { name } = props;
     if(!props) {
       throw new BadRequestException('Props of Company is null / undefined')
@@ -18,12 +16,12 @@ export class Company {
     if(isStringEmptyOrUndefined(name)) {
       throw new BadRequestException('Name is null/undefined');
     }
+    this.name = name;
   }
 
   public readProps(): CompanyProps {
-    const { name } = this.props;
     return {
-      name
+      name: this.name
     }
   }
 }

@@ -5,6 +5,12 @@ export interface ViewUserResponse {
   length: number;
 }
 
+export interface FileResponse {
+  status: | 'success' | 'error';
+  fileName: string;
+  message?: string;
+}
+
 
 export interface IUserRepository {
   create(newUser: User): Promise<void>;
@@ -13,4 +19,5 @@ export interface IUserRepository {
   delete(id: string): Promise<void>;
   viewUsers(): Promise<ViewUserResponse>;
   findById(id: string): Promise<User | null>;
+  uploadAvatar(id: string,  avatar: string, avatarBuffer: Buffer): void;
 }

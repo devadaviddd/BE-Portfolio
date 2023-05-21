@@ -1,4 +1,4 @@
-import { MongoDBConfig } from "../../../data";
+import { MetaData, MongoDBConfig } from "../../../data";
 import { UserCollectionRepository, UserMongoDBMapper } from "../data";
 
 const userCollectionConfig: MongoDBConfig = {
@@ -9,7 +9,10 @@ const userCollectionConfig: MongoDBConfig = {
 
 const userMongoDBMapper = new UserMongoDBMapper();
 
+export const metaData = new MetaData(userCollectionConfig);
+
 export const userRepository = new UserCollectionRepository(
   userCollectionConfig,
   userMongoDBMapper
 );
+

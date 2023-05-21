@@ -31,20 +31,23 @@ export class UserMongoDBMapper extends DatabaseMapper<
     return schools;
   }
 
-  companyMapToStrings(company: Company[]): string[] {
-    const companies: string[] = company.map((each: any) => {
-      const { name } = each.props;
-      return name;
+  companyMapToStrings(companies: Company[]): string[] {
+    const companiesModel: string[] = []
+    companies.map((company: Company) => {
+      companiesModel.push(company.name);
     })
-    return companies;
+    return companiesModel;
   } 
 
-  schoolMapToStrings(school: School[]): string[] {
-    const schools: string[] = school.map((each: any) => {      
-      const { name } = each.props;
-      return name;
+  schoolMapToStrings(schools: School[]): string[] {
+    console.log('schools', schools);
+    const schoolsModel: string[] = [];
+    schools.map((school) => {      
+      console.log('school name: ', school.name);
+      schoolsModel.push(school.name);
     })
-    return schools;
+    console.log('schoolsModel', schoolsModel);    
+    return schoolsModel;
   } 
 
   toDomain(dataModel: UserDataModel): User {

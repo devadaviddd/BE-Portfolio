@@ -4,13 +4,10 @@ import { isStringEmptyOrUndefined } from "../../../../utils"
 export interface SchoolProps {
   name: string
 }
-
 export class School {
-  public get name() {
-    return this.props.name;
-  }
+  public name: string;
 
-  constructor(private readonly props: SchoolProps) {
+  constructor(props: SchoolProps) {
     const { name } = props;
     if(!props) {
       throw new BadRequestException('Props of school is null / undefined')
@@ -18,12 +15,12 @@ export class School {
     if(isStringEmptyOrUndefined(name)) {
       throw new BadRequestException('Name School is invalid');
     }
+    this.name = name;
   }
 
   public readProps(): SchoolProps {
-    const { name } = this.props;
     return {
-      name
+      name: this.name
     }
   }
 }

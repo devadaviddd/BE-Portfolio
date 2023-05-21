@@ -7,7 +7,7 @@ import {
 } from '../../domain';
 import { v4 as uuid } from 'uuid';
 import {
-  GetUserUseCaseResponse,
+  GetUsersUseCaseResponse,
   GetUsersUseCase,
 } from '../get-users.usecase';
 
@@ -80,7 +80,7 @@ describe('Get Users Unit Test Suite', () => {
           length: users.length,
         }),
       );
-      const expectResponse = new GetUserUseCaseResponse(
+      const expectResponse = new GetUsersUseCaseResponse(
         usersProps,
         usersProps.length,
       );

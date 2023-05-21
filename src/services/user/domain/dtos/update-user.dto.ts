@@ -8,5 +8,6 @@ export interface UpdateUserDto {
   company?: Company[],
   school?: School[],
   avatar?: string,
+  avatarBuffer?: Buffer,
   password?: string,
 }

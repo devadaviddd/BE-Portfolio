@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { CreateUserDto, UpdateUserDto } from '../domain';
-import { CreateUserUseCaseInput } from '../usecases';
+import {
+  CreateUserUseCaseInput,
+  GetUserUseCaseInput,
+} from '../usecases';
 import {
   createUserUseCase,
   deleteUserUseCase,
+  getUserUseCase,
   getUsersUseCase,
   updateUserUseCase,
 } from '../di';
@@ -33,6 +37,15 @@ export const getUsers = async (
   next: NextFunction,
 ) => {
   try {
+    const email = request.query.email as string;
+    if (email) {
+      const input = new GetUserUseCaseInput(email);
+      const result = await getUserUseCase.execute(input);
+      return response.send({
+        message: result.message,
+        user: result.user,
+      });
+    }
     const result = await getUsersUseCase.execute();
     return response.send({
       users: result.users,
@@ -51,10 +64,16 @@ export const updateUser = async (
   try {
     const { id } = request.params;
     const dto = request.body as UpdateUserDto;
+    const imageData = request.file;
+    console.log('imageData', imageData);
+    dto.avatarBuffer = imageData?.buffer;
+    dto.avatar = imageData?.originalname;
+    console.log('dto', dto);
     const result = await updateUserUseCase.execute({
       id,
       dto,
     });
+
     return response.send({
       message: result.message,
       modifiedUser: result.updateUser,
@@ -70,7 +89,7 @@ export const deleteUser = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = request.params;    
+    const { id } = request.params;
     const result = await deleteUserUseCase.execute({
       id,
     });
