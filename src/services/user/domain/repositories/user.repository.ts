@@ -1,8 +1,8 @@
-import { GridFSBucketReadStream, GridFSFile } from "mongodb";
+import { GridFSBucketReadStream } from "mongodb";
 import { User } from "../models";
 
-export interface ViewUserResponse {
-  result: User[];
+export interface ViewUsersResponse {
+  result: ViewUserResponse[];
   length: number;
 }
 
@@ -17,17 +17,17 @@ export type ImageType = {
   mimetype: string,
 }
 
-export interface GetUserResponse {
+export type ViewUserResponse = {
   user: User;
-  imageData: GridFSFile
+  base64Image?: string;
 }
 
 export interface IUserRepository {
   create(newUser: User): Promise<void>;
   update(_id: string, newUser: User): Promise<void>;
-  findByEmail(email: string): Promise<GetUserResponse | null>;
+  findByEmail(email: string): Promise<ViewUserResponse | null>;
   delete(id: string): Promise<void>;
-  viewUsers(): Promise<ViewUserResponse>;
+  viewUsers(): Promise<ViewUsersResponse>;
   findById(id: string): Promise<User | null>;
   uploadAvatar(id: string, imageData: Express.Multer.File): void;
 }

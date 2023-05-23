@@ -1,4 +1,4 @@
-import { Db, GridFSBucket, MongoClient } from "mongodb";
+import { Db, GridFSBucket, MongoClient, ObjectId } from "mongodb";
 import { MongoDBConfig } from "./mongo.repository";
 import mongoose from "mongoose";
 
@@ -10,12 +10,11 @@ export class MetaData {
     this.bucket = new GridFSBucket(db, { bucketName: config.collection });
   }
 
-  public getImageAsBase64 = async (filename: string): Promise<string> => {
+  public getImageAsBase64 = async (id: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
       const chunks: Buffer[] = [];
-  
       this.bucket
-        .openDownloadStreamByName(filename)
+        .openDownloadStream(new ObjectId(id))
         .on('error', (error) => {
           reject(error);
         })

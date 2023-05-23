@@ -59,9 +59,6 @@ export class User {
     if (isStringEmptyOrUndefined(email)) {
       throw new BadRequestException('Email is null/undefined');
     }
-    if (!id) {
-      this.id = uuid();
-    }
     this.username = username;
     this.email = email;
     this.fullName = fullName;
@@ -71,6 +68,10 @@ export class User {
     this.avatar = avatar;
     this.password = password;
     this.id = id;
+
+    if (!id) {
+      this.id = uuid();
+    }
   }
 
   public accessProps(): UserProps {

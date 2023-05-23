@@ -23,6 +23,5 @@ export class MongoDBRepository<DomainModel, DataModel> {
       throw new InternalServerException('Invalid URL to database')
     }
     await mongoose.connect(this.mongoURI);
-    console.log('MongoDb Connected');
   }
 }

@@ -7,7 +7,7 @@ import {
   UpdateUserUseCase,
 } from '../usecases';
 import { DeleteUserUseCase } from '../usecases/delete-user.usecase';
-import { userRepository } from './init-repository';
+import { metaData, userRepository } from './init-repository';
 
 export const signinUseCase = new SigninUseCase(userRepository);
 export const signupUseCase = new SignUpUseCase(userRepository);

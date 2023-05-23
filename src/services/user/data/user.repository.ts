@@ -1,7 +1,23 @@
-import { Collection, Db, GridFSBucket, MongoClient, ObjectId } from 'mongodb';
+import {
+  Collection,
+  Db,
+  GridFSBucket,
+  GridFSFile,
+  MongoClient,
+  ObjectId,
+} from 'mongodb';
 import { MongoDBConfig, MongoDBRepository } from '../../../data';
-import { GetUserResponse, IUserRepository, User, ViewUserResponse } from '../domain';
-import { UserDataModel, UserMongoDBMapper } from './user-mapper';
+import {
+  IUserRepository,
+  User,
+  ViewUserResponse,
+  ViewUsersResponse,
+} from '../domain';
+import {
+  AvatarChunkModel,
+  UserDataModel,
+  UserMongoDBMapper,
+} from './user-mapper';
 import { UnknownException } from '../../../exceptions';
 import { metaData } from '../di';
 import { DefaultBytesSize } from '../../../config';
@@ -12,13 +28,16 @@ export class UserCollectionRepository
   public client = new MongoClient(this.config.url);
   private userDatabase: Db;
   private collection: Collection<UserDataModel>;
+  private avatarCollection: Collection<AvatarChunkModel>;
 
   constructor(config: MongoDBConfig, mapper: UserMongoDBMapper) {
     super(config, mapper);
     this.userDatabase = this.client.db(this.config.database);
     this.collection = this.userDatabase.collection<UserDataModel>(
-      this.config.collection,      
+      this.config.collection,
     );
+    this.avatarCollection =
+      this.userDatabase.collection('User.chunks');
   }
   async create(user: User): Promise<void> {
     try {
@@ -28,20 +47,46 @@ export class UserCollectionRepository
       throw new UnknownException(error as string);
     }
   }
-  async findByEmail(email: string): Promise<GetUserResponse | null> {
+  async findByEmail(email: string): Promise<ViewUserResponse | null> {
     try {
       const query = { email: email };
       const records = await this.collection.find(query).toArray();
       if (records.length > 0) {
         const user: User = this.mapper.toDomain(records[0]);
-        const imageRetrieves = await metaData.bucket
-          .find({ filename: user.avatar })
+        const avatarFiles = await this.userDatabase
+          .collection('User')
+          .aggregate([
+            {
+              $lookup: {
+                from: 'User.files',
+                localField: '_id',
+                foreignField: 'metadata.userId',
+                as: 'AvatarFile',
+              },
+            },
+            {
+              $unwind: '$AvatarFile',
+            },
+          ])
           .toArray();
-        const imageData = imageRetrieves[0];
 
-        return {
-          user, imageData
-        };
+        const userAvatarFiles = avatarFiles.filter((avatarFile) => {
+          if (avatarFile.email === email) {
+            return avatarFile;
+          }
+        });
+
+        let image = '';
+        if (userAvatarFiles) {
+          const latestAvatar =
+            userAvatarFiles[userAvatarFiles.length - 1];
+          const avatarId = latestAvatar.AvatarFile._id;
+
+          image = await metaData.getImageAsBase64(
+            avatarId.toString(),
+          );
+        }
+        return { user, base64Image: image };
       }
       return null;
     } catch (error) {
@@ -59,13 +104,57 @@ export class UserCollectionRepository
     }
   }
 
-  async viewUsers(): Promise<ViewUserResponse> {
+  async viewUsers(): Promise<ViewUsersResponse> {
     try {
       const records = await this.collection.find().toArray();
+
       const users: User[] = records.map((record) => {
-        return this.mapper.toDomain(record);
+        const user = this.mapper.toDomain(record);
+        return user;
       });
-      return { result: users, length: records.length };
+
+      const avatarFiles = await this.userDatabase
+        .collection('User')
+        .aggregate([
+          {
+            $lookup: {
+              from: 'User.files',
+              localField: '_id',
+              foreignField: 'metadata.userId',
+              as: 'AvatarFile',
+            },
+          },
+          {
+            $unwind: '$AvatarFile',
+          },
+        ])
+        .toArray();
+
+      const usersWithAvatar: ViewUserResponse[] = await Promise.all(
+        users.map(async (user) => {
+          const userAvatarFiles = avatarFiles.filter((avatarFile) => {
+            if (avatarFile.email === user.email) {
+              return avatarFile;
+            }
+          });
+          let image = '';
+          if (userAvatarFiles) {
+            const latestAvatar =
+              userAvatarFiles[userAvatarFiles.length - 1];
+            const avatarId = latestAvatar.AvatarFile._id;
+
+            image = await metaData.getImageAsBase64(
+              avatarId.toString(),
+            );
+          }
+          return { user, base64Image: image };
+        }),
+      );
+
+      return {
+        result: usersWithAvatar,
+        length: usersWithAvatar.length,
+      };
     } catch (error) {
       throw new UnknownException(error as string);
     }
@@ -89,6 +178,7 @@ export class UserCollectionRepository
   }
   uploadAvatar(id: string, imageData: Express.Multer.File): void {
     try {
+      const chunks: Buffer[] = [];
       const uploadStream = metaData.bucket.openUploadStream(
         imageData.originalname,
         {
@@ -101,17 +191,9 @@ export class UserCollectionRepository
           },
         },
       );
-
-      uploadStream.on('error', (error) => {
-        throw error;
-      });
-
-      uploadStream.on('finish', () => {
-        console.log('done!');
-      });
-
       uploadStream.write(imageData.buffer);
       uploadStream.end();
+      uploadStream.writableEnded;
     } catch (error) {
       throw new UnknownException(error as string);
     }

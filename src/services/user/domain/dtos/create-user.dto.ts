@@ -7,7 +7,7 @@ export interface CreateUserDto {
   major?: string,
   company?: Company[],
   school?: School[],
-  avatar: string,
+  avatar?: string,
   password: string,
   id? : string  
 }

@@ -1,5 +1,13 @@
 import { BadRequestException } from '../../../exceptions';
-import { CreateUserDto, Email, IUserRepository, Password, User, UserProps, Username } from '../domain';
+import {
+  CreateUserDto,
+  Email,
+  IUserRepository,
+  Password,
+  User,
+  UserProps,
+  Username,
+} from '../domain';
 
 export class CreateUserUseCaseInput {
   constructor(public readonly dto: CreateUserDto) {}
@@ -32,11 +40,13 @@ export class CreateUserUseCase {
 
     if (!email || !username || !fullName || !password) {
       const missingFields: string[] = [];
-      if(!email) missingFields.push('email');
-      if(!username) missingFields.push('username');
-      if(!fullName) missingFields.push('fullName');
-      if(!password) missingFields.push('password');
-      throw new BadRequestException('Required Fields: ' +  missingFields);
+      if (!email) missingFields.push('email');
+      if (!username) missingFields.push('username');
+      if (!fullName) missingFields.push('fullName');
+      if (!password) missingFields.push('password');
+      throw new BadRequestException(
+        'Required Fields: ' + missingFields,
+      );
     }
 
     const isNotValidEmail = !Email.isValid(email);
@@ -49,10 +59,10 @@ export class CreateUserUseCase {
     }
 
     const isNotValidPassword = !Password.isValid(password);
-    if(isNotValidPassword) {
+    if (isNotValidPassword) {
       throw new BadRequestException('Password is not valid');
     }
-    
+
     const user = new User({
       email,
       username,
@@ -64,9 +74,10 @@ export class CreateUserUseCase {
       password,
     });
 
-    const isExistedUser = await this.userRepository.findByEmail(email);
-    console.log('isExistedUser', isExistedUser);
-    
+    const isExistedUser = await this.userRepository.findByEmail(
+      email,
+    );
+
     if (isExistedUser) {
       throw new BadRequestException('User is existed');
     }
@@ -75,7 +86,7 @@ export class CreateUserUseCase {
     const message = 'Create user Successfully';
     return {
       message,
-      result: user.accessProps()
-    }
+      result: user.accessProps(),
+    };
   }
 }

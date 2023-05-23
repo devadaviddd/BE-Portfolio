@@ -46,8 +46,6 @@ export class UpdateUserUseCase {
       password,
     } = dto;
 
-    console.log('avatar here: ', avatar);
-
     const isUnchangedUserName = isStringEmptyOrUndefined(username);
     const isUnchangedEmail = isStringEmptyOrUndefined(email);
     const isUnchangedFullName = isStringEmptyOrUndefined(fullName);
@@ -97,11 +95,8 @@ export class UpdateUserUseCase {
       if (user.company !== company) user.updateCompany(company!);
     }
     if (!isUnchangedAvatar) {
-      if (user.avatar !== avatar) {
-        user.updateAvatar(avatar!);
-        console.log('avatar: ', avatar);
-        this.userRepository.uploadAvatar(id, imageData!);
-      }
+      this.userRepository.uploadAvatar(id, imageData!);
+      user.avatar = imageData?.originalname
     }
     if (!isUnchangedMajor) {
       if (user.major !== major) user.updateMajor(major!);

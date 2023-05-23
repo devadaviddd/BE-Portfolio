@@ -1,4 +1,4 @@
-import { User, UserProps } from "../services/user/domain";
+import { User, UserProps, } from "../services/user/domain";
 
 export const userResponseFormat = (users: User[]): UserProps[] => {
   return users.map((user) => {
