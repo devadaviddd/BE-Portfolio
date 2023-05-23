@@ -1,15 +1,10 @@
-import { Collection, Db, GridFSBucket, MongoClient } from 'mongodb';
+import { Collection, Db, GridFSBucket, MongoClient, ObjectId } from 'mongodb';
 import { MongoDBConfig, MongoDBRepository } from '../../../data';
-import {
-  FileResponse,
-  IUserRepository,
-  User,
-  ViewUserResponse,
-} from '../domain';
+import { GetUserResponse, IUserRepository, User, ViewUserResponse } from '../domain';
 import { UserDataModel, UserMongoDBMapper } from './user-mapper';
 import { UnknownException } from '../../../exceptions';
 import { metaData } from '../di';
-\
+import { DefaultBytesSize } from '../../../config';
 export class UserCollectionRepository
   extends MongoDBRepository<User, UserDataModel>
   implements IUserRepository
@@ -22,7 +17,7 @@ export class UserCollectionRepository
     super(config, mapper);
     this.userDatabase = this.client.db(this.config.database);
     this.collection = this.userDatabase.collection<UserDataModel>(
-      this.config.collection,
+      this.config.collection,      
     );
   }
   async create(user: User): Promise<void> {
@@ -33,13 +28,20 @@ export class UserCollectionRepository
       throw new UnknownException(error as string);
     }
   }
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<GetUserResponse | null> {
     try {
       const query = { email: email };
       const records = await this.collection.find(query).toArray();
       if (records.length > 0) {
         const user: User = this.mapper.toDomain(records[0]);
-        return user;
+        const imageRetrieves = await metaData.bucket
+          .find({ filename: user.avatar })
+          .toArray();
+        const imageData = imageRetrieves[0];
+
+        return {
+          user, imageData
+        };
       }
       return null;
     } catch (error) {
@@ -85,17 +87,18 @@ export class UserCollectionRepository
       throw new UnknownException(error as string);
     }
   }
-  uploadAvatar(
-    id: string,
-    avatar: string,
-    avatarBuffer: Buffer,
-  ): void {
+  uploadAvatar(id: string, imageData: Express.Multer.File): void {
     try {
       const uploadStream = metaData.bucket.openUploadStream(
-        avatar,
+        imageData.originalname,
         {
-          chunkSizeBytes: 1048576,
-          metadata: { field: 'user', value: id },
+          chunkSizeBytes: DefaultBytesSize,
+          metadata: {
+            fieldName: imageData.fieldname,
+            originalName: imageData.originalname,
+            mimetype: imageData.mimetype,
+            userId: id,
+          },
         },
       );
 
@@ -107,7 +110,7 @@ export class UserCollectionRepository
         console.log('done!');
       });
 
-      uploadStream.write(avatarBuffer);
+      uploadStream.write(imageData.buffer);
       uploadStream.end();
     } catch (error) {
       throw new UnknownException(error as string);

@@ -2,6 +2,7 @@
 /.env
 /deploy.sh
 /deploy-local.sh
+/git.sh
 .serverless/ 
 dist/
 /coverage

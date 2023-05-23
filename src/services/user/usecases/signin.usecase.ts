@@ -26,7 +26,7 @@ export class SigninUseCase {
 
     console.log('email', email);
     console.log('password', password);
-    
+
     if (!email || !password) {
       const missingFields: string[] = [];
       if (!email) missingFields.push('email');
@@ -35,10 +35,11 @@ export class SigninUseCase {
       throw new BadRequestException(errorStr);
     }
 
-    const existedUser = await this.userRepository.findByEmail(email);
-    if (!existedUser) {
+    const response = await this.userRepository.findByEmail(email);
+    if (response?.user === null) {
       throw new NotFoundException('User is not existed');
     }
+    const existedUser = response!.user;
 
     const isPasswordNotMatched = !existedUser.matchPassword(password);
     if (isPasswordNotMatched)

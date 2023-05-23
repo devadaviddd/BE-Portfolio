@@ -42,7 +42,7 @@ export class UpdateUserUseCase {
       company,
       school,
       avatar,
-      avatarBuffer,
+      imageData,
       password,
     } = dto;
 
@@ -100,7 +100,7 @@ export class UpdateUserUseCase {
       if (user.avatar !== avatar) {
         user.updateAvatar(avatar!);
         console.log('avatar: ', avatar);
-        this.userRepository.uploadAvatar(id, avatar!, avatarBuffer!);
+        this.userRepository.uploadAvatar(id, imageData!);
       }
     }
     if (!isUnchangedMajor) {

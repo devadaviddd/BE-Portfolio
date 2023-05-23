@@ -1,10 +1,12 @@
+import { GridFSFile } from "mongodb";
 import { BadRequestException } from "../../../exceptions";
-import { IUserRepository, UserProps } from "../domain";
+import { IUserRepository, ImageType, UserProps } from "../domain";
 
 export class GetUserUseCaseResponse {
   constructor(
     public readonly message: string,
     public readonly user: UserProps,
+    public readonly imageData: GridFSFile,
   ) {}
 }
 
@@ -22,7 +24,8 @@ export class GetUserUseCase {
     }
     return {
       message: 'Get user successfully',
-      user: response.accessProps()
+      user: response.user.accessProps(),
+      imageData: response.imageData,
     }
   }
 }

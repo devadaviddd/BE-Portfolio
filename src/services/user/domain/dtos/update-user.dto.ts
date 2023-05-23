@@ -8,6 +8,6 @@ export interface UpdateUserDto {
   company?: Company[],
   school?: School[],
   avatar?: string,
-  avatarBuffer?: Buffer,
+  imageData?: Express.Multer.File,
   password?: string,
 }

@@ -24,6 +24,7 @@ describe('Update User Test Suite', () => {
       update: jest.fn(),
       delete: jest.fn(),
       findById: jest.fn(),
+      uploadAvatar: jest.fn(),
     };
     afterEach(() => {
       jest.resetAllMocks();

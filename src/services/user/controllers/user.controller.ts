@@ -9,9 +9,12 @@ import {
   deleteUserUseCase,
   getUserUseCase,
   getUsersUseCase,
+  metaData,
   updateUserUseCase,
 } from '../di';
 import { ApiErrorMapper } from '../../../utils';
+import { GridFSBucketReadStream } from 'mongodb';
+import { resolve } from 'path';
 
 export const createUser = async (
   request: Request,
@@ -41,11 +44,38 @@ export const getUsers = async (
     if (email) {
       const input = new GetUserUseCaseInput(email);
       const result = await getUserUseCase.execute(input);
+
+      console.log('metadata', result.imageData.metadata);
+
+      // const chunks: Buffer[] = [];
+      const base64Image = await metaData.getImageAsBase64(
+        result.imageData.filename,
+      );
+      // metaData.bucket
+      //   .openDownloadStreamByName(result.imageData.filename)
+      //   .on('error', (error) => {
+      //     console.log('error', error);
+      //   })
+      //   .on('data', (chunk) => {
+      //     console.log('chunk', chunk);
+      //     chunks.push(chunk);
+      //   })
+      //   .on('end', () => {
+      //     const imageBuffer = Buffer.concat(chunks);
+      //     base64Image = imageBuffer.toString('base64');
+      //     resolve(base64Image)
+      //     // console.log('Base64-encoded image:', base64Image);
+      //   })
+
+      console.log('base64Image', base64Image);
+
       return response.send({
         message: result.message,
         user: result.user,
+        imag: base64Image,
       });
     }
+
     const result = await getUsersUseCase.execute();
     return response.send({
       users: result.users,
@@ -66,8 +96,8 @@ export const updateUser = async (
     const dto = request.body as UpdateUserDto;
     const imageData = request.file;
     console.log('imageData', imageData);
-    dto.avatarBuffer = imageData?.buffer;
     dto.avatar = imageData?.originalname;
+    dto.imageData = imageData;
     console.log('dto', dto);
     const result = await updateUserUseCase.execute({
       id,
