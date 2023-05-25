@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-fallthrough */
+import { S3Bucket } from '../../../data';
 import { BadRequestException } from '../../../exceptions';
 import {
   isArrayUndefined,
@@ -28,7 +29,8 @@ export class UpdateUserUseCaseResponse {
 }
 
 export class UpdateUserUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository,
+    private readonly userFileBucket: S3Bucket) {}
 
   async execute(
     input: UpdateUserUseCaseInput,
@@ -94,9 +96,9 @@ export class UpdateUserUseCase {
     if (!isUnchangedCompany) {
       if (user.company !== company) user.updateCompany(company!);
     }
-    if (!isUnchangedAvatar) {
-      this.userRepository.uploadAvatar(id, imageData!);
-      user.avatar = imageData?.originalname
+    if (!isUnchangedAvatar) {      
+      await this.userFileBucket.uploadToBucket(id, imageData!);
+      user.avatar = user.id! + '/' + imageData?.originalname
     }
     if (!isUnchangedMajor) {
       if (user.major !== major) user.updateMajor(major!);

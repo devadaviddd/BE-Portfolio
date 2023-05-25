@@ -4,7 +4,6 @@ export class GetUserUseCaseResponse {
   constructor(
     public readonly message: string,
     public readonly user: User,
-    public readonly image?: string,
   ) {}
 }
 
@@ -27,7 +26,6 @@ export class GetUserUseCase {
     return {
       message: 'Get user successfully',
       user: response.user,
-      image: response.base64Image
     };
   }
 }

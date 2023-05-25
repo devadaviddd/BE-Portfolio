@@ -13,7 +13,6 @@ import {
 } from '../di';
 import { ApiErrorMapper } from '../../../utils';
 
-
 export const createUser = async (
   request: Request,
   response: Response,
@@ -46,7 +45,6 @@ export const getUsers = async (
       return response.send({
         message: result.message,
         user: result.user,
-        image: result.image,
       });
     }
 
@@ -102,3 +100,4 @@ export const deleteUser = async (
     return ApiErrorMapper.toErrorResponse(error, response);
   }
 };
+

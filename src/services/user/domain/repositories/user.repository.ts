@@ -1,4 +1,3 @@
-import { GridFSBucketReadStream } from "mongodb";
 import { User } from "../models";
 
 export interface ViewUsersResponse {
@@ -10,11 +9,6 @@ export interface FileResponse {
   status: | 'success' | 'error';
   fileName: string;
   message?: string;
-}
-
-export type ImageType = {
-  stream: GridFSBucketReadStream,
-  mimetype: string,
 }
 
 export type ViewUserResponse = {
@@ -29,5 +23,4 @@ export interface IUserRepository {
   delete(id: string): Promise<void>;
   viewUsers(): Promise<ViewUsersResponse>;
   findById(id: string): Promise<User | null>;
-  uploadAvatar(id: string, imageData: Express.Multer.File): void;
 }

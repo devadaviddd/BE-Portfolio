@@ -2,7 +2,6 @@ import express, { Router } from "express";
 import { createUser, deleteUser, getUsers, updateUser } from "../controllers";
 import multer from 'multer';
 
-// Configure Multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 

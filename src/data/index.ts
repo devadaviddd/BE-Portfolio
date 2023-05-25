@@ -1,3 +1,2 @@
 export * from './mongo.repository';
-export * from './metadata';
-
+export * from './bucket'

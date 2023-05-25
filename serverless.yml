@@ -25,6 +25,8 @@ provider:
     binaryMediaTypes:
       - '*/*'
 
+  
+
 functions:
   createUser:
     handler: dist/api.handler

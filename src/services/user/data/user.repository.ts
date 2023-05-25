@@ -19,7 +19,6 @@ import {
   UserMongoDBMapper,
 } from './user-mapper';
 import { UnknownException } from '../../../exceptions';
-import { metaData } from '../di';
 import { DefaultBytesSize } from '../../../config';
 export class UserCollectionRepository
   extends MongoDBRepository<User, UserDataModel>
@@ -76,16 +75,7 @@ export class UserCollectionRepository
           }
         });
 
-        let image = '';
-        if (userAvatarFiles) {
-          const latestAvatar =
-            userAvatarFiles[userAvatarFiles.length - 1];
-          const avatarId = latestAvatar.AvatarFile._id;
-
-          image = await metaData.getImageAsBase64(
-            avatarId.toString(),
-          );
-        }
+        const  image = '';    
         return { user, base64Image: image };
       }
       return null;
@@ -137,16 +127,16 @@ export class UserCollectionRepository
               return avatarFile;
             }
           });
-          let image = '';
-          if (userAvatarFiles) {
-            const latestAvatar =
-              userAvatarFiles[userAvatarFiles.length - 1];
-            const avatarId = latestAvatar.AvatarFile._id;
+          const image = '';
+          // if (userAvatarFiles) {
+          //   const latestAvatar =
+          //     userAvatarFiles[userAvatarFiles.length - 1];
+          //   const avatarId = latestAvatar.AvatarFile._id;
 
-            image = await metaData.getImageAsBase64(
-              avatarId.toString(),
-            );
-          }
+          //   image = await metaData.getImageAsBase64(
+          //     avatarId.toString(),
+          //   );
+          // }
           return { user, base64Image: image };
         }),
       );
@@ -172,28 +162,6 @@ export class UserCollectionRepository
     try {
       const query = { _id: id };
       await this.collection.deleteOne(query);
-    } catch (error) {
-      throw new UnknownException(error as string);
-    }
-  }
-  uploadAvatar(id: string, imageData: Express.Multer.File): void {
-    try {
-      const chunks: Buffer[] = [];
-      const uploadStream = metaData.bucket.openUploadStream(
-        imageData.originalname,
-        {
-          chunkSizeBytes: DefaultBytesSize,
-          metadata: {
-            fieldName: imageData.fieldname,
-            originalName: imageData.originalname,
-            mimetype: imageData.mimetype,
-            userId: id,
-          },
-        },
-      );
-      uploadStream.write(imageData.buffer);
-      uploadStream.end();
-      uploadStream.writableEnded;
     } catch (error) {
       throw new UnknownException(error as string);
     }

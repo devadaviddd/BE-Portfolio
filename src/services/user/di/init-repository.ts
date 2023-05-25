@@ -1,4 +1,4 @@
-import { MetaData, MongoDBConfig } from "../../../data";
+import { AWSCredential, BucketConfig, MongoDBConfig, S3Bucket } from "../../../data";
 import { UserCollectionRepository, UserMongoDBMapper } from "../data";
 
 const userCollectionConfig: MongoDBConfig = {
@@ -7,12 +7,21 @@ const userCollectionConfig: MongoDBConfig = {
   url: process.env.MONGO_DATABASE!
 };
 
+const awsCredential: AWSCredential = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+}
+
 const userMongoDBMapper = new UserMongoDBMapper();
 
-export const metaData = new MetaData(userCollectionConfig);
+const userBucketConfig: BucketConfig = {
+  bucketName: process.env.USER_FILE_BUCKET!
+}
 
 export const userRepository = new UserCollectionRepository(
   userCollectionConfig,
   userMongoDBMapper
 );
+
+export const userFileBucket = new S3Bucket(awsCredential, userBucketConfig)
 
