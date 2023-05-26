@@ -3,10 +3,6 @@ import * as fs from 'fs';
 import { BadRequestException, UnknownException } from '../exceptions';
 import { IBucket, ImageType } from '../domains';
 
-export interface AWSCredential {
-  accessKeyId: string;
-  secretAccessKey: string;
-}
 
 export interface BucketConfig {
   bucketName: string;
@@ -16,11 +12,10 @@ export class S3Bucket implements IBucket {
   private bucketConfig: BucketConfig;
   private bucket: AWS.S3;
   constructor(
-    awsCredential: AWSCredential,
     bucketConfig: BucketConfig,
   ) {
     this.bucketConfig = bucketConfig;
-    this.bucket = new AWS.S3(awsCredential);
+    this.bucket = new AWS.S3();
   }
 
   getBucketConfig(): BucketConfig {
